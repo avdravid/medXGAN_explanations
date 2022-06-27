@@ -45,6 +45,59 @@ classifier.load_state_dict(torch.load(args.classifier_root_dir, map_location = d
 classifier.eval()
 
 
+### Data
+
+class SquashTransform:
+    def __call__(self, inputs):
+        return 2 * inputs - 1
+     
+BATCH_SIZE = args.batch_size
+data_train = torchvision.datasets.ImageFolder(
+    args.root_dir + '/Training',
+    transform=torchvision.transforms.Compose([
+         torchvision.transforms.Resize((64, 64)),
+        torchvision.transforms.ToTensor(),
+        SquashTransform()
+    ])
+)
+
+
+data_val = torchvision.datasets.ImageFolder(
+    args.root_dir + '/Testing',
+    transform=torchvision.transforms.Compose([
+         torchvision.transforms.Resize((64, 64)),
+        torchvision.transforms.ToTensor(),
+        SquashTransform()
+    ])
+)
+
+print(len(data_train))
+print(len(data_val))
+
+
+
+train_loader = torch.utils.data.DataLoader(
+    data_train,
+    batch_size=BATCH_SIZE,
+    shuffle=True,
+    num_workers=0, 
+    drop_last=True
+)
+
+
+val_loader = torch.utils.data.DataLoader(
+    data_val,
+    batch_size=BATCH_SIZE,
+    shuffle=False,
+    num_workers=0
+)
+
+
+classes = data_train.classes
+print(data_val.classes)
+print(classes)
+
+
 # ### Load Example Image and Reconstruct
 
 # In[141]:
