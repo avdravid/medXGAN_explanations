@@ -1,11 +1,5 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# ### Device + Imports
-
-# In[138]:
-
-
+import os
+import argparse
 import torch
 import torchvision
 import matplotlib.pyplot as plt
@@ -15,16 +9,26 @@ import cv2
 
 
 device = torch.device('cpu')
-
-# if torch.cuda.is_available():
-#     device = torch.device('cuda:0')
-    
+if torch.cuda.is_available():
+    device = torch.device('cuda:0')    
 print(device)
 
+def add_args(parser):
+    parser.add_argument("--epochs", type=int, default=1000, help="number of epochs per prune iteration")
+    parser.add_argument("--batch_size", type=int, default=32, help="batch size")
+    parser.add_argument("--root_dir", type=str, default='', help='Root Directory of Dataset')
+    parser.add_argument("--classifier_root_dir", type=str, default='', help='Location of Classifier Weights')
+    return parser
 
-# ### Import Models + Load Weights
+parser = argparse.ArgumentParser()
+parser = add_args(parser)
+args = parser.parse_args()
+print("Arguments : " , args)
 
-# In[139]:
+
+
+
+
 
 
 from Generator import Generator
@@ -32,18 +36,12 @@ from Classifier import Classifier
 from Discriminator import Discriminator
 
 
-# In[140]:
-
 
 gen = Generator().to(device)
 discr = Discriminator().to(device)
 classifier = Classifier().to(device)
 
-
-gen.load_state_dict(torch.load('generator_weights.pytorch', map_location = device))
-discr.load_state_dict(torch.load('discriminator_weights.pytorch', map_location = device))
-classifier.load_state_dict(torch.load('classifier_weights.pytorch', map_location = device))
-#gen.eval()
+classifier.load_state_dict(torch.load(args.classifier_root_dir, map_location = device))
 classifier.eval()
 
 
