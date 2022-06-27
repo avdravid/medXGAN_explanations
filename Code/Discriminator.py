@@ -7,7 +7,7 @@ class Discriminator(torch.nn.Module):
         super(Discriminator, self).__init__()
 
         self.main = torch.nn.Sequential(
-            # input is (nc) x 128 x 128
+            
             torch.nn.Conv2d(
                 in_channels=3,
                 out_channels=16,
